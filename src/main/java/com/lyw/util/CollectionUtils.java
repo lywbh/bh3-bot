@@ -3,7 +3,7 @@ package com.lyw.util;
 import java.util.Collection;
 
 /**
- * Created by CreditEase.
+ * Created by yiweiliang.
  * User: yiweiliang1
  * Date: 2018/4/2
  */
@@ -13,7 +13,7 @@ public class CollectionUtils {
         if (collection == null || collection.isEmpty()) {
             return null;
         }
-        int sel = (int) (Math.random() * collection.size());
+        int sel = RandomUtils.nextIntByRange(collection.size());
         int i = 0;
         for (T s : collection) {
             if (i == sel) {

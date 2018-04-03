@@ -69,7 +69,15 @@ public class RobotController {
         Long groupId = cqpPostMsg.getGroup_id();
         CqpHttpApi api = CqpHttpApi.getInstance();
         Object response = "";
-        if (message.startsWith("!learn ")) {
+        if (message.startsWith("!help")) {
+            StringBuilder resp = new StringBuilder();
+            resp.append("!learn A B: 学习A对应的回答B\n");
+            resp.append("!forget A B: 忘记A对应的回答B\n");
+            resp.append("!roll xxx: roll点\n");
+            resp.append("!translate xxx: 翻译\n");
+            resp.append("@我 武器圣痕名称: 查询崩崩崩攻略");
+            response = api.sendGroupMsg(groupId, resp.toString());
+        } else if (message.startsWith("!learn ")) {
             /* 学习 */
             String learnResp = LearningModule.learn(message);
             response = api.sendGroupMsg(groupId, learnResp);
@@ -80,6 +88,9 @@ public class RobotController {
         } else if (message.startsWith("!roll")) {
             /* roll点 */
             int result = RollModule.roll();
+            response = api.sendGroupMsg(groupId, String.valueOf(result));
+        } else if (message.startsWith("!translate")) {
+            String result = TranslateModule.translate(message);
             response = api.sendGroupMsg(groupId, String.valueOf(result));
         } else if (message.startsWith("[CQ:at,qq=" + myQQ + "]")) {
             /* @我 */

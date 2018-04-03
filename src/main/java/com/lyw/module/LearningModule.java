@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Created by CreditEase.
+ * Created by yiweiliang.
  * User: yiweiliang1
  * Date: 2018/3/30
  *
@@ -20,7 +20,7 @@ import java.util.Set;
 @Slf4j
 public class LearningModule {
 
-    public static String filePath = "C:\\Users\\kamimi\\IdeaProjects\\bh3-bot\\learn.txt";
+    public static String filePath = "D:\\dev\\code\\bh3-bot\\learn.txt";
 
     public static Map<String, Set<String>> learnMap = JSON.parseObject(FileUtils.readToString(filePath), new TypeReference<Map<String, Set<String>>>() {});
 
