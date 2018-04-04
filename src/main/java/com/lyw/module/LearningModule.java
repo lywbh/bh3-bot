@@ -21,7 +21,7 @@ import java.util.Set;
 @Slf4j
 public class LearningModule {
 
-    public static String filePath = "D:\\dev\\code\\bh3-bot\\learn.txt";
+    public static String filePath = "C:\\Users\\kamimi\\IdeaProjects\\bh3-bot\\learn.txt";
 
     public static Map<Long, Map<String, Set<String>>> learnMap = JSON.parseObject(
             FileUtils.readToString(filePath),
@@ -30,7 +30,13 @@ public class LearningModule {
     );
 
     public static synchronized String learn(Long groupId, String message) {
-        Map<String, Set<String>> groupMap = learnMap.getOrDefault(groupId, new HashMap<>());
+        Map<String, Set<String>> groupMap;
+        if (learnMap.containsKey(groupId)) {
+            groupMap = learnMap.get(groupId);
+        } else {
+            groupMap = new HashMap<>();
+            learnMap.put(groupId, groupMap);
+        }
         try {
             String[] learnTab = message.split(" ");
             if (learnTab.length == 3) {
