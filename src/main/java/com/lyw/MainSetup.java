@@ -1,6 +1,7 @@
 package com.lyw;
 
 import org.nutz.dao.Dao;
+import org.nutz.dao.util.DaoUp;
 import org.nutz.dao.util.Daos;
 import org.nutz.integration.quartz.NutQuartzCronJobFactory;
 import org.nutz.ioc.Ioc;
@@ -12,9 +13,9 @@ public class MainSetup implements Setup {
     public void init(NutConfig nc) {
         Ioc ioc = nc.getIoc();
         ioc.get(NutQuartzCronJobFactory.class);
-        // 暂时用不到数据库
-        /*Dao dao = ioc.get(Dao.class);
-        Daos.createTablesInPackage(dao, "com.lyw", false);*/
+        Dao dao = ioc.get(Dao.class);
+        DaoUp.me().setDao(dao);
+        Daos.createTablesInPackage(dao, "com.lyw", false);
     }
 
     @Override
