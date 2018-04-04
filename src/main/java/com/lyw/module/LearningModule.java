@@ -6,6 +6,7 @@ import com.lyw.util.CollectionUtils;
 import com.lyw.util.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -22,24 +23,32 @@ public class LearningModule {
 
     public static String filePath = "D:\\dev\\code\\bh3-bot\\learn.txt";
 
-    public static Map<String, Set<String>> learnMap = JSON.parseObject(FileUtils.readToString(filePath), new TypeReference<Map<String, Set<String>>>() {});
+    public static Map<Long, Map<String, Set<String>>> learnMap = JSON.parseObject(
+            FileUtils.readToString(filePath),
+            new TypeReference<Map<Long, Map<String, Set<String>>>>() {
+            }
+    );
 
-    public static synchronized String learn(String message) {
+    public static synchronized String learn(Long groupId, String message) {
+        Map<String, Set<String>> groupMap = learnMap.getOrDefault(groupId, new HashMap<>());
         try {
             String[] learnTab = message.split(" ");
             if (learnTab.length == 3) {
                 String key = learnTab[1];
                 String value = learnTab[2];
-                if (learnMap.containsKey(key)) {
-                    if (learnMap.get(key).contains(value)) {
+                if (key.length() <= 1) {
+                    return "关键词太短了，教我复杂点的吧~";
+                }
+                if (groupMap.containsKey(key)) {
+                    if (groupMap.get(key).contains(value)) {
                         return "我已经学过这个了~";
                     } else {
-                        learnMap.get(key).add(value);
+                        groupMap.get(key).add(value);
                     }
                 } else {
                     Set<String> newRes = new HashSet<>();
                     newRes.add(value);
-                    learnMap.put(key, newRes);
+                    groupMap.put(key, newRes);
                 }
                 return "学习成功，对我说" + key + "试试吧~";
             } else {
@@ -51,16 +60,17 @@ public class LearningModule {
         }
     }
 
-    public static synchronized String forget(String message) {
+    public static synchronized String forget(Long groupId, String message) {
+        Map<String, Set<String>> groupMap = learnMap.getOrDefault(groupId, new HashMap<>());
         try {
             String[] learnTab = message.split(" ");
             if (learnTab.length == 3) {
                 String key = learnTab[1];
                 String value = learnTab[2];
-                if (learnMap.containsKey(key) && learnMap.get(key).contains(value)) {
-                    learnMap.get(key).remove(value);
-                    if (learnMap.get(key).isEmpty()) {
-                        learnMap.remove(key);
+                if (groupMap.containsKey(key) && groupMap.get(key).contains(value)) {
+                    groupMap.get(key).remove(value);
+                    if (groupMap.get(key).isEmpty()) {
+                        groupMap.remove(key);
                     }
                     return "呜呜...我再也不说" + value + "了";
                 } else {
@@ -75,12 +85,13 @@ public class LearningModule {
         }
     }
 
-    public static String pickResponse(String message) {
+    public static String pickResponse(Long groupId, String message) {
+        Map<String, Set<String>> groupMap = learnMap.getOrDefault(groupId, new HashMap<>());
         try {
             Set<String> responseSet = new HashSet<>();
-            for (String key : learnMap.keySet()) {
+            for (String key : groupMap.keySet()) {
                 if (message.contains(key)) {
-                    String s = CollectionUtils.random(learnMap.get(key));
+                    String s = CollectionUtils.random(groupMap.get(key));
                     responseSet.add(s);
                 }
             }

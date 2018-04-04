@@ -70,20 +70,19 @@ public class RobotController {
         CqpHttpApi api = CqpHttpApi.getInstance();
         Object response = "";
         if (message.startsWith("!help")) {
-            StringBuilder resp = new StringBuilder();
-            resp.append("!learn A B: 学习A对应的回答B\n");
-            resp.append("!forget A B: 忘记A对应的回答B\n");
-            resp.append("!roll xxx: roll点\n");
-            resp.append("!translate xxx: 翻译\n");
-            resp.append("@我 武器圣痕名称: 查询崩崩崩攻略");
-            response = api.sendGroupMsg(groupId, resp.toString());
+            String resp = "!learn A B: 学习A对应的回答B\n" +
+                    "!forget A B: 忘记A对应的回答B\n" +
+                    "!roll xxx: roll点\n" +
+                    "!translate xxx: 翻译\n" +
+                    "@我 武器圣痕名称: 查询崩崩崩攻略";
+            response = api.sendGroupMsg(groupId, resp);
         } else if (message.startsWith("!learn ")) {
             /* 学习 */
-            String learnResp = LearningModule.learn(message);
+            String learnResp = LearningModule.learn(groupId, message);
             response = api.sendGroupMsg(groupId, learnResp);
         } else if (message.startsWith("!forget ")) {
             /* 忘记 */
-            String forgetResp = LearningModule.forget(message);
+            String forgetResp = LearningModule.forget(groupId, message);
             response = api.sendGroupMsg(groupId, forgetResp);
         } else if (message.startsWith("!roll")) {
             /* roll点 */
@@ -114,7 +113,7 @@ public class RobotController {
                 response = api.sendGroupMsg(groupId, String.valueOf(message));
             } else {
                 /* 其他消息 */
-                String picked = LearningModule.pickResponse(message);
+                String picked = LearningModule.pickResponse(groupId, message);
                 if (picked != null) {
                     response = api.sendGroupMsg(groupId, picked);
                 }
