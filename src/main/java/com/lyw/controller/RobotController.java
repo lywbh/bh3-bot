@@ -74,7 +74,7 @@ public class RobotController {
                     "!forget A B: 忘记A对应的回答B\n" +
                     "!roll xxx: roll点\n" +
                     "!translate xxx: 翻译\n" +
-                    "@我 武器圣痕名称: 查询崩崩崩攻略";
+                    "@我 女武神/武器/圣痕: 查询崩崩崩攻略";
             response = api.sendGroupMsg(groupId, resp);
         } else if (message.startsWith("!learn ")) {
             /* 学习 */
@@ -100,12 +100,15 @@ public class RobotController {
             } else {
                 actualMsg = "";
             }
+            String armorPic = ArmorGuideModule.getArmorImg(actualMsg);
             String weaponPic = WeaponGuideModule.getWeaponImg(actualMsg);
             String stigmaUrl = StigmataGuideModule.getStigmataUrl(actualMsg);
-            if (stigmaUrl != null) {
-                response = api.sendGroupMsg(groupId, stigmaUrl);
-            } else {
+            if (armorPic != null) {
+                response = api.sendGroupMsg(groupId, armorPic);
+            } else if (weaponPic != null) {
                 response = api.sendGroupMsg(groupId, weaponPic);
+            } else {
+                response = api.sendGroupMsg(groupId, stigmaUrl);
             }
         } else {
             if (GroupRepeatModule.triggerRepeat(cqpPostMsg)) {
