@@ -39,27 +39,26 @@ public class LearningModule {
         }
         try {
             String[] learnTab = message.split(" ");
-            if (learnTab.length == 3) {
-                String key = learnTab[1];
-                String value = learnTab[2];
-                if (key.length() <= 1) {
-                    return "关键词太短了，教我复杂点的吧~";
-                }
-                if (groupMap.containsKey(key)) {
-                    if (groupMap.get(key).contains(value)) {
-                        return "我已经学过这个了~";
-                    } else {
-                        groupMap.get(key).add(value);
-                    }
-                } else {
-                    Set<String> newRes = new HashSet<>();
-                    newRes.add(value);
-                    groupMap.put(key, newRes);
-                }
-                return "学习成功，对我说" + key + "试试吧~";
-            } else {
+            if (learnTab.length != 3) {
                 return "格式不对哟！";
             }
+            String key = learnTab[1];
+            String value = learnTab[2];
+            if (key.length() <= 1) {
+                return "关键词太短了，教我复杂点的吧~";
+            }
+            if (groupMap.containsKey(key)) {
+                if (groupMap.get(key).contains(value)) {
+                    return "我已经学过这个了~";
+                } else {
+                    groupMap.get(key).add(value);
+                }
+            } else {
+                Set<String> newRes = new HashSet<>();
+                newRes.add(value);
+                groupMap.put(key, newRes);
+            }
+            return "学习成功，对我说" + key + "试试吧~";
         } catch (Throwable e) {
             log.error("学习异常，消息内容：" + message, e);
             return "呜呜..学习回路出现了异常";
@@ -70,20 +69,19 @@ public class LearningModule {
         Map<String, Set<String>> groupMap = learnMap.getOrDefault(groupId, new HashMap<>());
         try {
             String[] learnTab = message.split(" ");
-            if (learnTab.length == 3) {
-                String key = learnTab[1];
-                String value = learnTab[2];
-                if (groupMap.containsKey(key) && groupMap.get(key).contains(value)) {
-                    groupMap.get(key).remove(value);
-                    if (groupMap.get(key).isEmpty()) {
-                        groupMap.remove(key);
-                    }
-                    return "呜呜...我再也不说" + value + "了";
-                } else {
-                    return "我不记得我有学过这个..";
-                }
-            } else {
+            if (learnTab.length != 3) {
                 return "格式不对哟！";
+            }
+            String key = learnTab[1];
+            String value = learnTab[2];
+            if (groupMap.containsKey(key) && groupMap.get(key).contains(value)) {
+                groupMap.get(key).remove(value);
+                if (groupMap.get(key).isEmpty()) {
+                    groupMap.remove(key);
+                }
+                return "呜呜...我再也不说" + value + "了";
+            } else {
+                return "我不记得我有学过这个..";
             }
         } catch (Throwable e) {
             log.error("忘记异常，消息内容：" + message, e);
