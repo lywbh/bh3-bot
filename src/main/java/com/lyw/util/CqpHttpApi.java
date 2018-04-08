@@ -184,7 +184,7 @@ public class CqpHttpApi implements CqpApi {
         map.put("group_id", groupId);
         map.put("user_id", qq);
         map.put("enable", enable);
-        String resp = HttpUtil.post(HTTP_SERVER_HOST + SET_GROUP_WHOLE_BAN, map, timeOut);
+        String resp = HttpUtil.post(HTTP_SERVER_HOST + SET_GROUP_ADMIN, map, timeOut);
         return JsonUtils.toObject(resp, CqpHttpApiResp.class);
     }
 
