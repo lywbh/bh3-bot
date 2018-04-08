@@ -20,7 +20,6 @@ public class EnergyRemind implements Job {
     @Override
     public void execute(JobExecutionContext jobExecutionContext) {
         String msg = "崩崩崩，体力领取！";
-        CqpHttpApi.getInstance().sendGroupMsg(201012763, msg);
-        CqpHttpApi.getInstance().sendGroupMsg(596917621, msg);
+        GroupConfig.getJobsList().forEach(groupId -> CqpHttpApi.getInstance().sendGroupMsg(groupId, msg));
     }
 }
