@@ -7,10 +7,7 @@ import org.nutz.dao.Cnd;
 import org.nutz.dao.Dao;
 import org.nutz.dao.util.DaoUp;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -45,9 +42,10 @@ public class IdiomGameModule {
             condition = Cnd.where("PingYin", "like", lastPy + " %");
         }
         List<Chengyu> resultList = DaoUp.me().dao().query(Chengyu.class, condition);
-        return resultList.stream()
-                .map(Chengyu::getChengYu).collect(Collectors.toList())
-                .contains(phrase);
+        Optional<Chengyu> foundCy = resultList.stream()
+                .filter(cy -> phrase.equals(cy.getChengYu())).findAny();
+        foundCy.ifPresent(groupGaming::add);
+        return foundCy.isPresent();
     }
 
     public static String pickIdiom(Long groupId, String lastWord) {
