@@ -75,6 +75,7 @@ public class RobotController {
             return "";
         }
         String message = cqpPostMsg.getMessage();
+        Long qqNo = cqpPostMsg.getUser_id();
         Long groupId = cqpPostMsg.getGroup_id();
         CqpHttpApi api = CqpHttpApi.getInstance();
         Object response = "";
@@ -83,6 +84,7 @@ public class RobotController {
                     "!forget A B: 忘记A对应的回答B\n" +
                     "!roll xxx: roll点\n" +
                     "!translate xxx: 翻译\n" +
+                    "!sleep 1: ？\n" +
                     "@我 女武神/武器/圣痕: 查询崩崩崩攻略\n" +
                     "!game start 成语接龙: 开始游戏\n" +
                     "!game end: 结束游戏";
@@ -99,7 +101,7 @@ public class RobotController {
             /* roll点 */
             int result = RollModule.roll();
             response = api.sendGroupMsg(groupId, String.valueOf(result));
-        } else if (message.startsWith("!translate")) {
+        } else if (message.startsWith("!translate ")) {
             /* 翻译 */
             String result = TranslateModule.translate(message);
             response = api.sendGroupMsg(groupId, String.valueOf(result));
@@ -119,6 +121,11 @@ public class RobotController {
             if (robotStatus.getOrDefault(groupId, NORMAL_MODE) != NORMAL_MODE) {
                 robotStatus.put(groupId, NORMAL_MODE);
                 response = api.sendGroupMsg(groupId, "游戏模式已关闭");
+            }
+        } else if (message.startsWith("!sleep ")) {
+            String[] msgArr = message.split(" ");
+            if (msgArr.length == 2) {
+                api.setGroupBan(qqNo, groupId, Long.valueOf(msgArr[1]) * 60);
             }
         } else if (message.startsWith("[CQ:at,qq=" + myQQ + "]")) {
             /* @我 */
