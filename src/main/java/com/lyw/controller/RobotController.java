@@ -84,6 +84,7 @@ public class RobotController {
                     "!forget A B: 忘记A对应的回答B\n" +
                     "!roll xxx: roll点\n" +
                     "!translate xxx: 翻译\n" +
+                    "!image xxx [图片]: 拼接文字\n" +
                     "!sleep 1: ？\n" +
                     "@我 女武神/武器/圣痕: 查询崩崩崩攻略\n" +
                     "!game start 成语接龙: 开始游戏\n" +
@@ -126,6 +127,18 @@ public class RobotController {
             String[] msgArr = message.split(" ");
             if (msgArr.length == 2) {
                 api.setGroupBan(qqNo, groupId, Long.valueOf(msgArr[1]) * 60);
+            }
+        } else if (message.startsWith("!image ")) {
+            String[] msgArr = message.split(" ");
+            if (msgArr.length == 3) {
+                String content = msgArr[1];
+                String cqImg = msgArr[2];
+                String inputName = StringUtils.substringBetween(cqImg, "[CQ:image,file=", ",");
+                if (StringUtils.isEmpty(inputName)) {
+                    inputName = StringUtils.substringBetween(cqImg, "[CQ:image,file=", "]");
+                }
+                String outputName = ImageWordModule.wordAdd(inputName, content);
+                response = api.sendGroupMsg(groupId, "[CQ:image,file=" + outputName + "]");
             }
         } else if (message.startsWith("[CQ:at,qq=" + myQQ + "]")) {
             /* @我 */

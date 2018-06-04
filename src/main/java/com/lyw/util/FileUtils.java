@@ -1,5 +1,6 @@
 package com.lyw.util;
 
+import com.xiaoleilu.hutool.io.FileUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
@@ -10,7 +11,7 @@ import java.io.*;
  * Date: 2018/4/2
  */
 @Slf4j
-public class FileUtils {
+public class FileUtils extends FileUtil {
 
     public static String readToString(String fileName) {
         String encoding = "UTF-8";
