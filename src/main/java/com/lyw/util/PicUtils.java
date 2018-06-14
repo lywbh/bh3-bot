@@ -43,13 +43,12 @@ public class PicUtils {
             g.setFont(new Font("微软雅黑", Font.PLAIN, fontSize));
             g.setColor(new Color(0, 0, 0, 255));
             int x = (srcImgWidth - getWatermarkLength(content, g)) / 2;
-            int y = srcImgHeight + whiteBarHeight - (int) Math.round(fontSize * 0.1);
+            int y = (int) Math.round(srcImgHeight + whiteBarHeight - fontSize * 0.2);
             g.drawString(content, x, y);
             g.dispose();
 
             FileOutputStream outImgStream = new FileOutputStream(tarImgPath);
             ImageIO.write(finalImg, "jpg", outImgStream);
-            System.out.println("添加水印完成");
             outImgStream.flush();
             outImgStream.close();
 
@@ -61,13 +60,5 @@ public class PicUtils {
     private static int getWatermarkLength(String waterMarkContent, Graphics2D g) {
         return g.getFontMetrics(g.getFont()).charsWidth(waterMarkContent.toCharArray(), 0, waterMarkContent.length());
     }
-
-    public static void main(String[] args) {
-        String srcImgPath = "C:/Users/kamimi/Desktop/123.jpg"; //源图片地址
-        String tarImgPath = "C:/Users/kamimi/Desktop/321.jpg"; //待存储的地址
-        String waterMarkContent = "啊啊啊啊啊啊啊啊啊";  //水印内容
-        PicUtils.addWord(srcImgPath, tarImgPath, waterMarkContent);
-    }
-
 
 }

@@ -39,7 +39,7 @@ interface CqpApi {
     String SET_RESTART = "set_restart";
     String SET_RESTART_PLUGIN = "set_restart_plugin";
 
-    int timeOut = 3000;
+    int timeOut = 10000;
 
     /**
      * 发送私聊消息

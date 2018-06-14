@@ -85,6 +85,7 @@ public class RobotController {
                     "!roll xxx: roll点\n" +
                     "!translate xxx: 翻译\n" +
                     "!image xxx [图片]: 拼接文字\n" +
+                    "!hentai xxx: 你又要社保了吧？\n" +
                     "!sleep 1: ？\n" +
                     "@我 女武神/武器/圣痕: 查询崩崩崩攻略\n" +
                     "!game start 成语接龙: 开始游戏\n" +
@@ -140,6 +141,16 @@ public class RobotController {
                 String outputName = ImageWordModule.wordAdd(inputName, content);
                 response = api.sendGroupMsg(groupId, "[CQ:image,file=" + outputName + "]");
             }
+        } else if (message.startsWith("!hentai")) {
+            String[] msgArr = message.split(" ");
+            String picUrl;
+            if (msgArr.length == 2) {
+                String content = msgArr[1];
+                picUrl = KonachanModule.randomPic(content);
+            } else {
+                picUrl = KonachanModule.randomPic("");
+            }
+            response = api.sendGroupMsg(groupId, "[CQ:image,file=" + picUrl + "]");
         } else if (message.startsWith("[CQ:at,qq=" + myQQ + "]")) {
             /* @我 */
             String[] msgArr = message.split(" ");
