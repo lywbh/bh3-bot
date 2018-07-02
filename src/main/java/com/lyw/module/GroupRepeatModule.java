@@ -64,7 +64,7 @@ public class GroupRepeatModule {
                 @Override
                 public void run() {
                     CqpPostMsg luckySender = null;
-                    for (int i = RandomUtils.nextIntByRange(gQueue.size()); i > 0; --i) {
+                    for (int i = RandomUtils.nextIntByRange(gQueue.size()) + 1; i > 0; --i) {
                         luckySender = gQueue.poll();
                     }
                     if (luckySender != null) {
