@@ -171,11 +171,10 @@ public class RobotController {
                 response = api.sendGroupMsg(groupId, stigmaUrl);
             }
         } else {
+            GroupRepeatModule.triggerBan(cqpPostMsg);
             if (GroupRepeatModule.triggerRepeat(cqpPostMsg)) {
                 /* 复读 */
                 response = api.sendGroupMsg(groupId, String.valueOf(message));
-            } else if (GroupRepeatModule.triggerBan(cqpPostMsg)) {
-                response = api.sendGroupMsg(groupId, "发现复读，哪位幸运复读机能吃到禁言套餐呢~？(*￣︶￣)");
             } else {
                 /* 其他消息 */
                 if (robotStatus.getOrDefault(groupId, NORMAL_MODE) == CHENGYU_GAMEING) {

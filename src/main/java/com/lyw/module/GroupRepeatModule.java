@@ -18,6 +18,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 @Slf4j
 public class GroupRepeatModule {
 
+    private static CqpHttpApi api = CqpHttpApi.getInstance();
+
     private static Map<Long, String> newestWord = new HashMap<>();
     private static Map<Long, Long> newestSender = new HashMap<>();
     private static Map<Long, String> lastRepeated = new HashMap<>();
@@ -43,14 +45,14 @@ public class GroupRepeatModule {
     }
 
     private static Map<Long, Queue<CqpPostMsg>> groupMsgQueue = new HashMap<>();
-
-    public static synchronized boolean triggerBan(CqpPostMsg cqpPostMsg) {
+    private static int triggerLine = 3;
+    public static synchronized void triggerBan(CqpPostMsg cqpPostMsg) {
         Long groupId = cqpPostMsg.getGroup_id();
         Queue<CqpPostMsg> gQueue;
         if (groupMsgQueue.containsKey(groupId)) {
             gQueue = groupMsgQueue.get(groupId);
             gQueue.offer(cqpPostMsg);
-            while (gQueue.size() > 4) {
+            while (gQueue.size() > triggerLine) {
                 gQueue.poll();
             }
         } else {
@@ -58,26 +60,27 @@ public class GroupRepeatModule {
             gQueue.offer(cqpPostMsg);
             groupMsgQueue.put(groupId, gQueue);
         }
-        boolean trigger = gQueue.size() == 4 && allSame(gQueue);
-        if (trigger) {
+        if (hasTrigger(gQueue)) {
+            api.sendGroupMsg(groupId, "发现复读，哪位幸运复读机能吃到禁言套餐呢~？(*￣︶￣)");
+            List<Long> rollList = new ArrayList<>();
+            CqpPostMsg msg;
+            while ((msg = gQueue.poll()) != null) {
+                rollList.add(msg.getUser_id());
+            }
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    CqpPostMsg luckySender = null;
-                    for (int i = RandomUtils.nextIntByRange(gQueue.size()) + 1; i > 0; --i) {
-                        luckySender = gQueue.poll();
-                    }
-                    if (luckySender != null) {
-                        CqpHttpApi.getInstance().setGroupBan(luckySender.getUser_id(), groupId, 60);
-                    }
-                    gQueue.clear();
+                    long luckySender = rollList.get(RandomUtils.nextIntByRange(1, rollList.size()));
+                    api.setGroupBan(luckySender, groupId, 60);
                 }
             }, 4000);
         }
-        return trigger;
     }
 
-    private static boolean allSame(Queue<CqpPostMsg> gQueue) {
+    private static boolean hasTrigger(Queue<CqpPostMsg> gQueue) {
+        if (gQueue.size() < triggerLine) {
+            return false;
+        }
         Set<String> set = new HashSet<>();
         gQueue.forEach(msg -> set.add(msg.getMessage()));
         return set.size() == 1;
