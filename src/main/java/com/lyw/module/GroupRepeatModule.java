@@ -1,6 +1,9 @@
 package com.lyw.module;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.lyw.util.CqpHttpApi;
+import com.lyw.util.FileUtils;
 import com.lyw.util.RandomUtils;
 import com.lyw.vo.CqpPostMsg;
 import lombok.extern.slf4j.Slf4j;
@@ -20,14 +23,35 @@ public class GroupRepeatModule {
 
     private static CqpHttpApi api = CqpHttpApi.getInstance();
 
+    public static String filePath = "C:\\Users\\kamimi\\IdeaProjects\\bh3-bot\\repeatSwitch.txt";
+    public static Map<Long, Boolean> repeatSwitch = JSON.parseObject(
+            FileUtils.readToString(filePath),
+            new TypeReference<Map<Long, Boolean>>() {
+            }
+    );
+
     private static Map<Long, String> newestWord = new HashMap<>();
     private static Map<Long, Long> newestSender = new HashMap<>();
     private static Map<Long, String> lastRepeated = new HashMap<>();
 
-    public static synchronized Boolean triggerRepeat(CqpPostMsg cqpPostMsg) {
+    public static String repeatSwitch(boolean swc, long groupId) {
+        boolean currentSwitch = repeatSwitch.getOrDefault(groupId, false);
+        if (currentSwitch == swc) {
+            return swc ? "已经处于复读模式" : "已经关闭复读模式";
+        } else {
+            repeatSwitch.put(groupId, swc);
+            return swc ? "复读已开启" : "复读已关闭";
+        }
+
+    }
+
+    public static synchronized boolean triggerRepeat(CqpPostMsg cqpPostMsg) {
         String message = cqpPostMsg.getMessage();
         Long groupId = cqpPostMsg.getGroup_id();
         Long senderId = cqpPostMsg.getUser_id();
+        if (!repeatSwitch.getOrDefault(groupId, false)) {
+            return false;
+        }
         Boolean trigger = false;
         try {
             trigger = newestWord.containsKey(groupId) && message.equals(newestWord.get(groupId))
@@ -46,6 +70,7 @@ public class GroupRepeatModule {
 
     private static Map<Long, Queue<CqpPostMsg>> groupMsgQueue = new HashMap<>();
     private static int triggerLine = 3;
+
     public static synchronized void triggerBan(CqpPostMsg cqpPostMsg) {
         Long groupId = cqpPostMsg.getGroup_id();
         Queue<CqpPostMsg> gQueue;
@@ -61,19 +86,14 @@ public class GroupRepeatModule {
             groupMsgQueue.put(groupId, gQueue);
         }
         if (hasTrigger(gQueue)) {
-            api.sendGroupMsg(groupId, "发现复读，哪位幸运复读机能吃到禁言套餐呢~？(*￣︶￣)");
             List<Long> rollList = new ArrayList<>();
             CqpPostMsg msg;
             while ((msg = gQueue.poll()) != null) {
                 rollList.add(msg.getUser_id());
             }
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    long luckySender = rollList.get(RandomUtils.nextIntByRange(1, rollList.size()));
-                    api.setGroupBan(luckySender, groupId, 60);
-                }
-            }, 4000);
+            long luckySender = rollList.get(RandomUtils.nextIntByRange(1, rollList.size()));
+            api.setGroupBan(luckySender, groupId, 60);
+            api.sendGroupMsg(groupId, "[CQ:at,qq=" + luckySender + "] 恭喜您被选为幸运复读机~(*￣︶￣)");
         }
     }
 

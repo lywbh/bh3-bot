@@ -11,7 +11,6 @@ import org.nutz.mvc.annotation.At;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @Description
@@ -84,6 +83,7 @@ public class RobotController {
                     "!forget A B: 忘记A对应的回答B\n" +
                     "!roll xxx: roll点\n" +
                     "!translate xxx: 翻译\n" +
+                    "!repeat on/off: 复读开关\n" +
                     "!image xxx [图片]: 拼接文字\n" +
                     "!hentai xxx: 你又要社保了吧？\n" +
                     "!sleep 1: ？\n" +
@@ -107,6 +107,17 @@ public class RobotController {
             /* 翻译 */
             String result = TranslateModule.translate(message);
             response = api.sendGroupMsg(groupId, String.valueOf(result));
+        } else if (message.startsWith("!repeat ")) {
+            String[] msgArr = message.split(" ");
+            if (msgArr.length == 2) {
+                if (StringUtils.equals(msgArr[1], "on")) {
+                    String resp = GroupRepeatModule.repeatSwitch(true, groupId);
+                    response = api.sendGroupMsg(groupId, resp);
+                } else if (StringUtils.equals(msgArr[1], "off")) {
+                    String resp = GroupRepeatModule.repeatSwitch(false, groupId);
+                    response = api.sendGroupMsg(groupId, resp);
+                }
+            }
         } else if (message.startsWith("!game start")) {
             if (robotStatus.getOrDefault(groupId, NORMAL_MODE) == NORMAL_MODE) {
                 if (message.endsWith("成语接龙")) {
