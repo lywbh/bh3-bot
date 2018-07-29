@@ -2,14 +2,15 @@ package com.lyw.util;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.Image;
+import java.awt.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -51,14 +52,57 @@ public class PicUtils {
             ImageIO.write(finalImg, "jpg", outImgStream);
             outImgStream.flush();
             outImgStream.close();
-
         } catch (Exception e) {
             log.error("图片添加文字异常", e);
         }
     }
-
     private static int getWatermarkLength(String waterMarkContent, Graphics2D g) {
         return g.getFontMetrics(g.getFont()).charsWidth(waterMarkContent.toCharArray(), 0, waterMarkContent.length());
+    }
+
+    public static BufferedImage changeSize(BufferedImage bufferedImage, int width, int height) {
+        // 缩放比例
+        double ratio;
+        // 计算缩放比例
+        if (bufferedImage.getHeight() > bufferedImage.getWidth()) {
+            ratio = (new Integer(height)).doubleValue() / bufferedImage.getHeight();
+        } else {
+            ratio = (new Integer(width)).doubleValue() / bufferedImage.getWidth();
+        }
+        AffineTransformOp op = new AffineTransformOp(AffineTransform.getScaleInstance(ratio, ratio), null);
+        return op.filter(bufferedImage, null);
+    }
+
+    public static void mergeImage(List<String> images, File descImage) {
+        if (images == null || images.isEmpty()) {
+            return;
+        }
+        try {
+            int width, height;
+            if (images.size() <= 5) {
+                width = 80 * images.size();
+                height = 80;
+            } else {
+                width = 80 * 5;
+                height = 80 * ((images.size() - 1) / 5 + 1);
+            }
+            BufferedImage descBufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_4BYTE_ABGR);
+            Graphics2D graphics2d = (Graphics2D) descBufferedImage.getGraphics();
+            graphics2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            for (int i = 0; i < images.size(); ++i) {
+                BufferedImage bufferedImage = ImageIO.read(new File(images.get(i)));
+                bufferedImage = changeSize(bufferedImage, 80, 80);
+                // 往画布上添加图片,并设置边距
+                int x = 80 * (i % 5);
+                int y = 80 * (i / 5);
+                graphics2d.drawImage(bufferedImage, null, x, y);
+            }
+            graphics2d.dispose();
+            // 输出新图片
+            ImageIO.write(descBufferedImage, "png", descImage);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }

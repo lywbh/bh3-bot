@@ -79,13 +79,15 @@ public class RobotController {
         CqpHttpApi api = CqpHttpApi.getInstance();
         Object response = "";
         if (message.startsWith("!help")) {
-            String resp = "!learn A B: 学习A对应的回答B\n" +
+            String resp = "!learn on/off: 学习模块开关\n" +
+                    "!learn A B: 学习A对应的回答B\n" +
                     "!forget A B: 忘记A对应的回答B\n" +
                     "!roll xxx: roll点\n" +
                     "!translate xxx: 翻译\n" +
                     "!repeat on/off: 复读开关\n" +
                     "!image xxx [图片]: 拼接文字\n" +
                     "!hentai xxx: 你又要社保了吧？\n" +
+                    "!标配补给/装备补给: 十连" +
                     "!sleep 1: ？\n" +
                     "@我 女武神/武器/圣痕: 查询崩崩崩攻略\n" +
                     "!game start 成语接龙: 开始游戏\n" +
@@ -93,7 +95,7 @@ public class RobotController {
             response = api.sendGroupMsg(groupId, resp);
         } else if (message.startsWith("!learn ")) {
             /* 学习 */
-            String learnResp = LearningModule.learn(groupId, message);
+            String learnResp = LearningModule.learn(qqNo, groupId, message);
             response = api.sendGroupMsg(groupId, learnResp);
         } else if (message.startsWith("!forget ")) {
             /* 忘记 */
@@ -162,6 +164,12 @@ public class RobotController {
                 picUrl = KonachanModule.randomPic("");
             }
             response = api.sendGroupMsg(groupId, "[CQ:image,file=" + picUrl + "]");
+        } else if (message.startsWith("!标配补给")) {
+            String supplyResult = StandardSupplyModule.supply();
+            response = api.sendGroupMsg(groupId, "[CQ:image,file=" + supplyResult + "]");
+        } else if (message.startsWith("!装备补给")) {
+            String supplyResult = EquipSupplyModule.supply();
+            response = api.sendGroupMsg(groupId, "[CQ:image,file=" + supplyResult + "]");
         } else if (message.startsWith("[CQ:at,qq=" + myQQ + "]")) {
             /* @我 */
             String[] msgArr = message.split(" ");

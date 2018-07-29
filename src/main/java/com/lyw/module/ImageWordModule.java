@@ -5,8 +5,11 @@ import com.xiaoleilu.hutool.io.FileUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
+import java.io.File;
 import java.util.List;
 import java.util.Optional;
+import java.util.Timer;
+import java.util.TimerTask;
 
 @Slf4j
 public class ImageWordModule {
@@ -20,6 +23,15 @@ public class ImageWordModule {
             String fileUrl = StringUtils.substringAfter(targetLine.get(), "url=");
             String targetName = System.currentTimeMillis() + fileName;
             PicUtils.addWord(fileUrl, imagePath + targetName, content);
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    File file = new File(imagePath, targetName);
+                    if (file.exists()) {
+                        file.delete();
+                    }
+                }
+            }, 60000);
             return targetName;
         }
         return null;
