@@ -29,6 +29,9 @@ public class RobotController {
     private static int CHENGYU_GAMEING = 1;
     private static Map<Long, Integer> robotStatus = new HashMap<>();
 
+    public static Map<Long, Integer> armorSupplyTimes = new HashMap<>();
+    public static Map<Long, Integer> equipSupplyTimes = new HashMap<>();
+
     @At("/accept")
     @AdaptBy(type = JsonAdaptor.class)
     public Object accept(CqpPostMsg cqpPostMsg) {
@@ -165,11 +168,25 @@ public class RobotController {
             }
             response = api.sendGroupMsg(groupId, "[CQ:image,file=" + picUrl + "]");
         } else if (message.startsWith("!标配补给")) {
-            String supplyResult = StandardSupplyModule.supply();
-            response = api.sendGroupMsg(groupId, "[CQ:image,file=" + supplyResult + "]");
+            Integer currentTimes = armorSupplyTimes.getOrDefault(qqNo, 1);
+            if (currentTimes <= 10) {
+                currentTimes += 1;
+                armorSupplyTimes.put(qqNo, currentTimes);
+                String supplyResult = StandardSupplyModule.supply();
+                response = api.sendGroupMsg(groupId, "[CQ:image,file=" + supplyResult + "]");
+            } else {
+                response = api.sendGroupMsg(groupId, "您今天的标配补给次数已经用完咯~");
+            }
         } else if (message.startsWith("!装备补给")) {
-            String supplyResult = EquipSupplyModule.supply();
-            response = api.sendGroupMsg(groupId, "[CQ:image,file=" + supplyResult + "]");
+            Integer currentTimes = equipSupplyTimes.getOrDefault(qqNo, 1);
+            if (currentTimes <= 10) {
+                currentTimes += 1;
+                equipSupplyTimes.put(qqNo, currentTimes);
+                String supplyResult = EquipSupplyModule.supply();
+                response = api.sendGroupMsg(groupId, "[CQ:image,file=" + supplyResult + "]");
+            } else {
+                response = api.sendGroupMsg(groupId, "您今天的装备补给次数已经用完咯~");
+            }
         } else if (message.startsWith("[CQ:at,qq=" + myQQ + "]")) {
             /* @我 */
             String[] msgArr = message.split(" ");

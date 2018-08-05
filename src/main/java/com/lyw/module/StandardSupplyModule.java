@@ -58,7 +58,7 @@ public class StandardSupplyModule {
                     mergedFile.delete();
                 }
             }
-        }, 60000);
+        }, 10000);
         return newFileName;
     }
 
