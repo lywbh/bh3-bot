@@ -15,22 +15,25 @@ import java.util.TimerTask;
  * User: yiweiliang1
  * Date: 2018/3/30
  */
-public class StandardSupplyModule {
+public class ArmorExtendSupplyModule {
 
     private static String basePath = "F:/software/酷Q Pro/data/image/";
 
-    private static String randomPoolPath = "armor-normal";
+    private static String randomPoolPath = "armor-extend";
 
     public static String supply() {
         List<String> dirs = new ArrayList<>();
         boolean hasRare = false;
         for (int i = 0; i < 10; ++i) {
             String rollRes = rollLeft();
-            if (!hasRare && (StringUtils.equals(rollRes, "s-armor") || StringUtils.equals(rollRes, "a-armor"))) {
+            if (!hasRare && (StringUtils.equals(rollRes, "s-armor")
+                    || StringUtils.equals(rollRes, "a-armor-up")
+                    || StringUtils.equals(rollRes, "a-armor"))) {
                 hasRare = true;
             }
             if (i == 9 && !hasRare) {
-                dirs.add(Math.random() < 0.1 ? "s-armor" : "a-armor");
+                double roll = Math.random();
+                dirs.add(roll < 0.1 ? "s-armor" : (roll < 0.4 ? "a-armor-up" : "a-armor"));
             } else {
                 dirs.add(rollRes);
             }
@@ -48,7 +51,7 @@ public class StandardSupplyModule {
                 throw new RuntimeException("可能缺少抽卡素材文件");
             }
         }
-        String newFileName = "armorSupply." + RandomUtils.getRandomNum(6) + System.currentTimeMillis();
+        String newFileName = "armorExtendSupply." + RandomUtils.getRandomNum(6) + System.currentTimeMillis();
         File mergedFile = new File(basePath, newFileName);
         PicUtils.mergeImage(imagePaths, mergedFile);
         new Timer().schedule(new TimerTask() {
@@ -66,8 +69,8 @@ public class StandardSupplyModule {
         List<String> sortedList = new ArrayList<>();
         for (String r : result) {
             if (StringUtils.equals(r, "s-armor")
-                    || StringUtils.equals(r, "a-armor")
-                    || StringUtils.equals(r, "b-armor")) {
+                    || StringUtils.equals(r, "a-armor-up")
+                    || StringUtils.equals(r, "a-armor")) {
                 sortedList.add(0, r);
             } else {
                 sortedList.add(r);
@@ -78,27 +81,23 @@ public class StandardSupplyModule {
 
     private static String rollLeft() {
         double r = Math.random();
-        if (r < 0.0117) {
+        if (r < 0.0094) {
             return "s-armor";
-        } else if (r < 0.117) {
+        } else if (r < 0.0376) {
+            return "a-armor-up";
+        } else if (r < 0.094) {
             return "a-armor";
-        } else if (r < 0.13) {
+        } else if (r < 0.12) {
             return "s-chip";
-        } else if (r < 0.2354) {
+        } else if (r < 0.279) {
+            return "a-chip-up";
+        } else if (r < 0.3743) {
             return "a-chip";
-        } else if (r < 0.2923) {
-            return "b-armor";
-        } else if (r < 0.2971) {
-            return "4-weapon";
-        } else if (r < 0.3046) {
-            return "4-stigmata";
-        } else if (r < 0.3822) {
-            return "3-weapon";
-        } else if (r < 0.6148) {
-            return "3-stigmata";
-        } else if (r < 0.7672) {
-            return "evo-item";
-        } else if (r < 0.9263) {
+        } else if (r < 0.629) {
+            return "skill-item";
+        } else if (r < 0.753) {
+            return "equip-exp";
+        } else if (r < 0.877) {
             return "chara-item";
         } else {
             return "gold-item";
@@ -112,7 +111,7 @@ public class StandardSupplyModule {
         } else if (r < 0.4) {
             return "2-stigmata";
         } else if (r < 0.6) {
-            return "evo-item";
+            return "equip-exp";
         } else if (r < 0.8) {
             return "chara-item";
         } else {

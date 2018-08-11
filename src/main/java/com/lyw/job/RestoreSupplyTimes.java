@@ -22,5 +22,6 @@ public class RestoreSupplyTimes implements Job {
     public void execute(JobExecutionContext jobExecutionContext) {
         RobotController.armorSupplyTimes.clear();
         RobotController.equipSupplyTimes.clear();
+        RobotController.extendSupplyTimes.clear();
     }
 }

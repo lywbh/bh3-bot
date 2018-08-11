@@ -31,6 +31,7 @@ public class RobotController {
 
     public static Map<Long, Integer> armorSupplyTimes = new HashMap<>();
     public static Map<Long, Integer> equipSupplyTimes = new HashMap<>();
+    public static Map<Long, Integer> extendSupplyTimes = new HashMap<>();
 
     @At("/accept")
     @AdaptBy(type = JsonAdaptor.class)
@@ -90,7 +91,7 @@ public class RobotController {
                     "!repeat on/off: 复读开关\n" +
                     "!image xxx [图片]: 拼接文字\n" +
                     "!hentai xxx: 你又要社保了吧？\n" +
-                    "!标配补给/装备补给: 十连" +
+                    "!标配补给/装备补给: 十连\n" +
                     "!sleep 1: ？\n" +
                     "@我 女武神/武器/圣痕: 查询崩崩崩攻略\n" +
                     "!game start 成语接龙: 开始游戏\n" +
@@ -168,8 +169,8 @@ public class RobotController {
             }
             response = api.sendGroupMsg(groupId, "[CQ:image,file=" + picUrl + "]");
         } else if (message.startsWith("!标配补给")) {
-            Integer currentTimes = armorSupplyTimes.getOrDefault(qqNo, 1);
-            if (currentTimes <= 10) {
+            Integer currentTimes = armorSupplyTimes.getOrDefault(qqNo, 0);
+            if (currentTimes < 3) {
                 currentTimes += 1;
                 armorSupplyTimes.put(qqNo, currentTimes);
                 String supplyResult = StandardSupplyModule.supply();
@@ -178,14 +179,24 @@ public class RobotController {
                 response = api.sendGroupMsg(groupId, "您今天的标配补给次数已经用完咯~");
             }
         } else if (message.startsWith("!装备补给")) {
-            Integer currentTimes = equipSupplyTimes.getOrDefault(qqNo, 1);
-            if (currentTimes <= 10) {
+            Integer currentTimes = equipSupplyTimes.getOrDefault(qqNo, 0);
+            if (currentTimes < 3) {
                 currentTimes += 1;
                 equipSupplyTimes.put(qqNo, currentTimes);
                 String supplyResult = EquipSupplyModule.supply();
                 response = api.sendGroupMsg(groupId, "[CQ:image,file=" + supplyResult + "]");
             } else {
                 response = api.sendGroupMsg(groupId, "您今天的装备补给次数已经用完咯~");
+            }
+        } else if (message.startsWith("!扩充补给")) {
+            Integer currentTimes = extendSupplyTimes.getOrDefault(qqNo, 0);
+            if (currentTimes < 3) {
+                currentTimes += 1;
+                extendSupplyTimes.put(qqNo, currentTimes);
+                String supplyResult = ArmorExtendSupplyModule.supply();
+                response = api.sendGroupMsg(groupId, "[CQ:image,file=" + supplyResult + "]");
+            } else {
+                response = api.sendGroupMsg(groupId, "您今天的扩充补给次数已经用完咯~");
             }
         } else if (message.startsWith("[CQ:at,qq=" + myQQ + "]")) {
             /* @我 */
@@ -207,7 +218,7 @@ public class RobotController {
                 response = api.sendGroupMsg(groupId, stigmaUrl);
             }
         } else {
-            GroupRepeatModule.triggerBan(cqpPostMsg);
+            //GroupRepeatModule.triggerBan(cqpPostMsg);
             if (GroupRepeatModule.triggerRepeat(cqpPostMsg)) {
                 /* 复读 */
                 response = api.sendGroupMsg(groupId, String.valueOf(message));
