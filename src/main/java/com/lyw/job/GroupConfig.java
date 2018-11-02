@@ -5,7 +5,7 @@ import java.util.List;
 
 public class GroupConfig {
 
-    private static List<Long> jobs = Arrays.asList(201012763L, 596917621L, 613879959L);
+    private static List<Long> jobs = Arrays.asList(596917621L);
 
     public static List<Long> getJobsList() {
         return jobs;

@@ -11,7 +11,7 @@ import lombok.extern.log4j.Log4j;
 public class KonachanModule {
 
     private static final String url = "https://konachan.com/post.json";
-    private static final String rating = "s";
+    private static final String rating = "e";
 
     public static String randomPic(String keyword) {
         String finalUrl = url + "?tags=" + keyword + "%20rating:" + rating;
