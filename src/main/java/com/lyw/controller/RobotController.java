@@ -62,7 +62,7 @@ public class RobotController {
         long groupId = cqpPostMsg.getGroup_id();
         CqpHttpApi api = CqpHttpApi.getInstance();
         Object response = "";
-        if (message.contains("有色图")
+        if (message.contains("有色图吗")
                 || message.contains("要一张色图")
                 || message.contains("来点色图")
                 || message.contains("来一点色图")
