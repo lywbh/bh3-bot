@@ -1,5 +1,9 @@
 package com.lyw.util;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Created by IntelliJ IDEA
  * User: yiweiliang
@@ -43,6 +47,20 @@ public class RandomUtils extends org.apache.commons.lang3.RandomUtils {
     public static String getRandomNum(int length) {
         String charSet = "0123456789";
         return randomStringBySet(length, charSet);
+    }
+
+    public static <T> List<T> randomFromList(List<T> list, int amount) {
+        if (list == null || amount > list.size()) {
+            throw new IllegalArgumentException("随机个数不能比原序列个数多");
+        }
+        List<T> resultList = new ArrayList<>();
+        for (int i = 0; i < amount; i++) {
+            int pos = nextIntByRange(list.size() - i);
+            T selected = list.get(pos);
+            list.remove(selected);
+            resultList.add(selected);
+        }
+        return resultList;
     }
 
     public static void main(String[] args) {

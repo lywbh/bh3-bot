@@ -60,7 +60,6 @@ public class RobotController {
         }
         String message = cqpPostMsg.getMessage();
         long groupId = cqpPostMsg.getGroup_id();
-        CqpHttpApi api = CqpHttpApi.getInstance();
         Object response = "";
         if (message.contains("有色图吗")
                 || message.contains("要一张色图")
@@ -70,15 +69,8 @@ public class RobotController {
                 || message.contains("来一张色图")
                 || message.contains("想看色图")
                 || message.contains("要看色图")) {
-            String[] msgArr = message.split(" ");
-            String picUrl;
-            if (msgArr.length == 2) {
-                String content = msgArr[1];
-                picUrl = KonachanModule.randomPic(content);
-            } else {
-                picUrl = KonachanModule.randomPic("");
-            }
-            response = api.sendGroupMsg(groupId, "[CQ:image,file=" + picUrl + "]");
+            String picUrl = KonachanModule.randomPic();
+            response = CqpHttpApi.getInstance().sendGroupMsg(groupId, "[CQ:image,file=" + picUrl + "]");
         }
         return response;
     }

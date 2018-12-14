@@ -7,6 +7,8 @@ import org.nutz.ioc.loader.annotation.IocBean;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 
+import java.util.List;
+
 @Slf4j
 @IocBean
 public class HentaiPush implements Job {
@@ -15,10 +17,10 @@ public class HentaiPush implements Job {
 
     @Override
     public void execute(JobExecutionContext jobExecutionContext) {
-        for (int i = 0; i < oncePush; ++i) {
-            String picUrl = KonachanModule.randomPic("");
+        List<String> picUrls = KonachanModule.randomPic(oncePush);
+        for (String url : picUrls) {
             GroupConfig.getJobsList().forEach(groupId ->
-                    CqpHttpApi.getInstance().sendGroupMsg(groupId, "[CQ:image,file=" + picUrl + "]"));
+                    CqpHttpApi.getInstance().sendGroupMsg(groupId, "[CQ:image,file=" + url + "]"));
         }
     }
 }
