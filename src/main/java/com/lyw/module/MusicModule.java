@@ -7,6 +7,9 @@ import com.lyw.util.HttpClientUtils;
 import com.lyw.vo.MusicItem;
 import lombok.extern.log4j.Log4j;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 @Log4j
 public class MusicModule {
 
@@ -14,6 +17,11 @@ public class MusicModule {
     private static String fetchUrl = "http://localhost:3000/song/url";
 
     public static MusicItem search(String key) {
+        try {
+            key = URLEncoder.encode(key, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         String finalUrl = searchUrl + "?keywords=" + key;
         log.info("music search url:" + finalUrl);
         String response = HttpClientUtils.doGet(finalUrl);

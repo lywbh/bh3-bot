@@ -5,6 +5,7 @@ import com.lyw.util.CqpHttpApi;
 import com.lyw.vo.CqpPostMsg;
 import com.lyw.vo.MusicItem;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.nutz.mvc.adaptor.JsonAdaptor;
 import org.nutz.mvc.annotation.AdaptBy;
 import org.nutz.mvc.annotation.At;
@@ -66,7 +67,7 @@ public class RobotController {
             String picUrl = YandereModule.randomPic();
             CqpHttpApi.getInstance().sendGroupMsg(groupId, "[CQ:image,file=" + picUrl + "]");
         } else if (message.startsWith("!music")) {
-            String keyword = message.split(" ")[1];
+            String keyword = StringUtils.substringAfter(message, " ");
             MusicItem musicInfo = MusicModule.search(keyword);
             if (musicInfo == null) {
                 CqpHttpApi.getInstance().sendGroupMsg(groupId, "没有检索到曲目：" + keyword);
