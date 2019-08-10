@@ -1,5 +1,5 @@
 var ioc = {
-    dataSource : {
+    /*dataSource : {
         type : "com.alibaba.druid.pool.DruidDataSource",
         events : {
             create : "init",
@@ -17,7 +17,7 @@ var ioc = {
     dao : {
         type : "org.nutz.dao.impl.NutDao",
         args : [{refer:"dataSource"}]
-    },
+    },*/
     conf : {
         type : "org.nutz.ioc.impl.PropertiesProxy",
         fields : {

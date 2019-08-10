@@ -1,6 +1,6 @@
 package com.lyw.job;
 
-import com.lyw.module.KonachanModule;
+import com.lyw.module.YandereModule;
 import com.lyw.util.CqpHttpApi;
 import lombok.extern.slf4j.Slf4j;
 import org.nutz.ioc.loader.annotation.IocBean;
@@ -13,14 +13,11 @@ import java.util.List;
 @IocBean
 public class HentaiPush implements Job {
 
-    private static final int oncePush = 5;
-
     @Override
     public void execute(JobExecutionContext jobExecutionContext) {
-        List<String> picUrls = KonachanModule.randomPic(oncePush);
-        for (String url : picUrls) {
-            GroupConfig.getJobsList().forEach(groupId ->
-                    CqpHttpApi.getInstance().sendGroupMsg(groupId, "[CQ:image,file=" + url + "]"));
-        }
+        String url = YandereModule.randomPic();
+        GroupConfig.getJobsList().forEach(groupId ->
+                CqpHttpApi.getInstance().sendGroupMsg(groupId, "[CQ:image,file=" + url + "]"));
     }
+
 }
