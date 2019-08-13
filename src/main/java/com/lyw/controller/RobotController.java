@@ -10,11 +10,19 @@ import org.nutz.mvc.adaptor.JsonAdaptor;
 import org.nutz.mvc.annotation.AdaptBy;
 import org.nutz.mvc.annotation.At;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Slf4j
 @At("/robot")
 public class RobotController {
 
     private static final long myQQ = 3125754795L;
+
+    private static final Set<Long> managerQQ = new HashSet<>();
+    static {
+        managerQQ.add(550271106L);
+    }
 
     @At("/accept")
     @AdaptBy(type = JsonAdaptor.class)
@@ -64,7 +72,12 @@ public class RobotController {
         String message = cqpPostMsg.getMessage();
         long groupId = cqpPostMsg.getGroup_id();
         if (message.startsWith("!pic")) {
-            String picUrl = YandereModule.randomPic();
+            String rating = StringUtils.substringAfter(message, " ");
+            if (StringUtils.equals(rating, "explicit") && !checkAuth(cqpPostMsg.getUser_id())) {
+                CqpHttpApi.getInstance().sendGroupMsg(groupId, "权限不足");
+                return;
+            }
+            String picUrl = YandereModule.randomPic(rating);
             CqpHttpApi.getInstance().sendGroupMsg(groupId, "[CQ:image,file=" + picUrl + "]");
         } else if (message.startsWith("!music")) {
             String keyword = StringUtils.substringAfter(message, " ");
@@ -78,6 +91,10 @@ public class RobotController {
                     ",title=" + musicInfo.getName() +
                     ",image=" + musicInfo.getImageUrl() + "]");
         }
+    }
+
+    private boolean checkAuth(long qqNo) {
+        return managerQQ.contains(qqNo);
     }
 
 }
