@@ -14,7 +14,7 @@
         <nutz.version>1.r.63</nutz.version>
         <lombok.version>1.16.18</lombok.version>
         <druid.version>1.1.5</druid.version>
-        <mysql.version>8.0.16</mysql.version>
+        <mysql.version>8.0.28</mysql.version>
         <junit.version>4.13.1</junit.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java-version>1.8</java-version>
